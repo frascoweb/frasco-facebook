@@ -13,8 +13,8 @@ def create_blueprint(app):
         return feature.facebook.authorize(callback=callback_url)
 
     @bp.route('/login/facebook/callback')
-    @feature.facebook.authorized_handler
-    def callback(resp):
+    def callback():
+        resp = feature.facebook.authorized_response()
         if resp is None:
             flash(feature.options["user_denied_login_message"], "error")
             return redirect(url_for("users.login"))
