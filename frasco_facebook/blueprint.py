@@ -10,22 +10,19 @@ def create_blueprint(app):
     @bp.route('/login/facebook')
     def login():
         callback_url = url_for('.callback', next=request.args.get('next'), _external=True)
-        return feature.facebook.authorize(callback=callback_url)
+        return feature.api.authorize(callback=callback_url)
 
     @bp.route('/login/facebook/callback')
     def callback():
-        resp = feature.facebook.authorized_response()
+        resp = feature.api.authorized_response()
         if resp is None:
             flash(feature.options["user_denied_login_message"], "error")
             return redirect(url_for("users.login"))
 
-        session["facebook_access_token"] = resp['access_token']
-        me = feature.facebook.get("/me")
-        del session["facebook_access_token"]
-
+        me = feature.api.get("/me", token=[resp['access_token']])
         attrs = {"facebook_access_token": resp['access_token'],
                  "facebook_token_expires": resp['expires'],
-                 "facebook_id": me.data["id"],
+                 "facebook_id": str(me.data["id"]),
                  "facebook_name": me.data["name"],
                  "facebook_email": me.data["email"]}
         defaults = {}
@@ -37,6 +34,6 @@ def create_blueprint(app):
             if k in me.data:
                 defaults[k] = me.data[k]
 
-        return users.oauth_login("facebook", "facebook_id", me.data["id"], attrs, defaults)
+        return users.oauth_login("facebook", "facebook_id", str(me.data["id"]), attrs, defaults)
 
     return bp
