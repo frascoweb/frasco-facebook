@@ -7,7 +7,7 @@ class FacebookFeature(Feature):
     name = "facebook"
     requires = ["users"]
     blueprints = [create_blueprint]
-    defaults = {"use_name_as_username": False,
+    defaults = {"use_name_as_username": True,
                 "use_email": True,
                 "scope": "email",
                 "save_data": ["first_name", "last_name"],

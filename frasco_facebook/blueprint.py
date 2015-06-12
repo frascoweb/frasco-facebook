@@ -28,7 +28,7 @@ def create_blueprint(app):
         defaults = {}
         if feature.options["use_email"]:
             defaults[users.options["email_column"]] = me.data["email"]
-        if feature.options["use_name_as_username"]:
+        if feature.options["use_name_as_username"] and users.options['email_column'] != users.options['username_column']:
             defaults[users.options["username_column"]] = me.data["name"]
         for k in feature.options["save_data"]:
             if k in me.data:
